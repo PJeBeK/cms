@@ -75,9 +75,9 @@
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label" for="multi">{{ _("Text") }}</label>
+                <label class="control-label" for="input_txt">{{ _("Text") }}</label>
                 <div class="controls">
-                    <textarea id="multi" type="text" class="input-xlarge" name="question_text" rows="5" maxlength="2000"></textarea>
+                    <textarea id="input_txt" type="text" class="input-xlarge" name="question_text" rows="5" maxlength="2000"></textarea>
                 </div>
             </div>
             <div class="control-group">
@@ -248,7 +248,7 @@
 
                         // Change display language, if the definitions are available
                         showKb = function(layout){
-                          var kb = $('#multi').getkeyboard();
+                          var kb = $('#input_txt').getkeyboard();
                           kb.options.layout = layout;
                           // redraw keyboard with new layout
                           kb.redraw();
@@ -267,7 +267,7 @@
                           o += '<option value="' + l[0] + '">' + l[1] + '</option>';
                         });
 
-                        $('#multi').keyboard({
+                        $('#input_txt').keyboard({
                           layout: 'qwerty',
                           usePreview : false,
                           autoAccept : true,
@@ -285,7 +285,7 @@
                         .previewKeyset();
 
                         $('button.open').click(function(){
-                          var kb = $('#multi');
+                          var kb = $('#input_txt');
                           showKb( $('#mslang').val() );
                         });
 
