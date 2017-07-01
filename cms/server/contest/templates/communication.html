@@ -1,4 +1,4 @@
-{% extends base.html %}
+{% extends contest.html %}
 {% block core %}
 <div class="span9">
 
@@ -9,27 +9,27 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 
 <!-- keyboard widget css & script -->
-<link href="{{url_root}}/static/keyboard/css/keyboard.css" rel="stylesheet">
-<script src="{{url_root}}/static/keyboard/js/jquery.keyboard.js"></script>
+<link href="{{ url("static", "keyboard", "css", "keyboard.css") }}" rel="stylesheet">
+<script src="{{ url("static", "keyboard", "js", "jquery.keyboard.js") }}"></script>
 
 <!-- css for the preview keyset extension -->
-<link href="{{url_root}}/static/keyboard/css/keyboard-previewkeyset.css" rel="stylesheet">
+<link href="{{ url("static", "keyboard", "css", "keyboard-previewkeyset.css") }}" rel="stylesheet">
 
 <!-- keyboard optional extensions - include ALL (includes mousewheel) -->
-<script src="{{url_root}}/static/keyboard/js/jquery.keyboard.extension-all.js"></script>
+<script src="{{ url("static", "keyboard", "js", "jquery.keyboard.extension-all.js") }}"></script>
 
 <!-- jQuery & jQuery UI + theme (required) -->
-<link href="{{url_root}}/static/keyboard/docs/css/jquery-ui.min.css" rel="stylesheet">
-<script src="{{url_root}}/static/keyboard/docs/js/jquery-ui.min.js"></script>
-<script src="{{url_root}}/static/keyboard/docs/js/bootstrap.min.js"></script>
+<link href="{{ url("static", "keyboard", "docs", "css", "jquery-ui.min.css") }}" rel="stylesheet">
+<script src="{{ url("static", "keyboard", "docs", "js", "jquery-ui.min.js") }}"></script>
+<script src="{{ url("static", "keyboard", "docs", "js", "bootstrap.min.js") }}"></script>
 
 <!-- keyboard extensions (optional) -->
-<script src="{{url_root}}/static/keyboard/js/jquery.mousewheel.js"></script>
-<script src="{{url_root}}/static/keyboard/js/jquery.keyboard.extension-typing.js"></script>
-<script src="{{url_root}}/static/keyboard/js/jquery.keyboard.extension-previewkeyset.js"></script>
+<script src="{{ url("static", "keyboard", "js", "jquery.mousewheel.js") }}"></script>
+<script src="{{ url("static", "keyboard", "js", "jquery.keyboard.extension-typing.js") }}"></script>
+<script src="{{ url("static", "keyboard", "js", "jquery.keyboard.extension-previewkeyset.js") }}"></script>
 
 <!-- preloaded keyboard layout -->
-<script src="{{url_root}}/static/keyboard/layouts/keyboard-layouts-microsoft.js" charset="utf-8"></script>
+<script src="{{ url("static", "keyboard", "layouts", "keyboard-layouts-microsoft.js") }}" charset="utf-8"></script>
 
 <div class="page-header">
     <h1>{{ _("Communication") }}</h1>
@@ -60,7 +60,7 @@
 
 <h2>{{ _("Questions") }}</h2>
 <div class="well question_submit">
-    <form class="form-horizontal" action="{{ url_root }}/question" method="POST">
+    <form class="form-horizontal" action="{{ contest_url("question") }}" method="POST">
         {% module xsrf_form_html() %}
         <fieldset>
             <div class="control-group">
