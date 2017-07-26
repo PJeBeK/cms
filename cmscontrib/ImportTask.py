@@ -45,7 +45,7 @@ import os
 import sys
 
 from cms import utf8_decoder
-from cms.db import Contest, SessionGen, Task, Dataset
+from cms.db import Contest, SessionGen, Task
 from cms.db.filecacher import FileCacher
 
 from cmscontrib import BaseImporter
@@ -116,24 +116,21 @@ class TaskImporter(BaseImporter):
                         if self.no_statement:
                             ignore.update(("primary_statements",
                                            "statements"))
-                        self._update_object(old_task, task, ignore)
-                        new_dataset = session.query(Dataset)\
-                            .filter(Dataset.task == old_task)\
-                            .filter(Dataset.description ==
-                                    task.active_dataset.description)\
-                            .first()
+                        new_dataset = task.active_dataset
                         new_testcases = dict()
                         for new_t in new_dataset.testcases.itervalues():
                             new_testcases[new_t.codename] = new_t
                         old_dataset = old_task.active_dataset
-                        old_results = new_dataset.\
+                        old_results = old_dataset.\
                             get_submission_results(old_dataset)
 
+                        submission_results = []
                         for old_sr in old_results:
                             # Create the submission result.
                             new_sr = old_sr.clone()
-                            new_sr.submission = old_sr.submission
+                            new_sr.submission_id = old_sr.submission_id
                             new_sr.dataset = new_dataset
+                            submission_results.append(new_sr)
 
                             # Create executables.
                             for old_e in old_sr.executables.itervalues():
@@ -142,12 +139,15 @@ class TaskImporter(BaseImporter):
 
                             # Create evaluations.
                             for old_e in old_sr.evaluations:
-                                new_e = old_e.clone()
-                                # logger.info(old_e.codename)
-                                new_e.submission_result = new_sr
-                                new_e.testcase = new_testcases[old_e.codename]
+                                codename = old_e.codename
+                                if codename in new_testcases:
+                                    new_e = old_e.clone()
+                                    new_e.submission_result = new_sr
+                                    new_e.testcase = new_testcases[codename]
 
-                        old_task.active_dataset = new_dataset
+                        self._update_object(old_task, task, ignore)
+                        for item in submission_results:
+                            session.add(item)
                     task = old_task
                 else:
                     logger.critical("Task \"%s\" already exists in database.",
