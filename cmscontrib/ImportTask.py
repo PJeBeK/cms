@@ -119,14 +119,15 @@ class TaskImporter(BaseImporter):
                         self._update_object(old_task, task, ignore)
                         new_dataset = session.query(Dataset)\
                             .filter(Dataset.task == old_task)\
-                            .filter(Dataset.description == task.active_dataset.description)\
+                            .filter(Dataset.description ==
+                                    task.active_dataset.description)\
                             .first()
-                        new_dataset.sa_session.flush()
                         new_testcases = dict()
                         for new_t in new_dataset.testcases.itervalues():
                             new_testcases[new_t.codename] = new_t
                         old_dataset = old_task.active_dataset
-                        old_results = new_dataset.get_submission_results(old_dataset)
+                        old_results = new_dataset.\
+                            get_submission_results(old_dataset)
 
                         for old_sr in old_results:
                             # Create the submission result.
@@ -142,11 +143,10 @@ class TaskImporter(BaseImporter):
                             # Create evaluations.
                             for old_e in old_sr.evaluations:
                                 new_e = old_e.clone()
-                                #logger.info(old_e.codename)
+                                # logger.info(old_e.codename)
                                 new_e.submission_result = new_sr
                                 new_e.testcase = new_testcases[old_e.codename]
 
-                        new_dataset.sa_session.flush()
                         old_task.active_dataset = new_dataset
                     task = old_task
                 else:
