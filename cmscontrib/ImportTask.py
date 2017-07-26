@@ -45,7 +45,7 @@ import os
 import sys
 
 from cms import utf8_decoder
-from cms.db import Contest, SessionGen, Task
+from cms.db import Contest, SessionGen, Task, Dataset
 from cms.db.filecacher import FileCacher
 
 from cmscontrib import BaseImporter
@@ -117,6 +117,37 @@ class TaskImporter(BaseImporter):
                             ignore.update(("primary_statements",
                                            "statements"))
                         self._update_object(old_task, task, ignore)
+                        new_dataset = session.query(Dataset)\
+                            .filter(Dataset.task == old_task)\
+                            .filter(Dataset.description == task.active_dataset.description)\
+                            .first()
+                        new_dataset.sa_session.flush()
+                        new_testcases = dict()
+                        for new_t in new_dataset.testcases.itervalues():
+                            new_testcases[new_t.codename] = new_t
+                        old_dataset = old_task.active_dataset
+                        old_results = new_dataset.get_submission_results(old_dataset)
+
+                        for old_sr in old_results:
+                            # Create the submission result.
+                            new_sr = old_sr.clone()
+                            new_sr.submission = old_sr.submission
+                            new_sr.dataset = new_dataset
+
+                            # Create executables.
+                            for old_e in old_sr.executables.itervalues():
+                                new_e = old_e.clone()
+                                new_e.submission_result = new_sr
+
+                            # Create evaluations.
+                            for old_e in old_sr.evaluations:
+                                new_e = old_e.clone()
+                                #logger.info(old_e.codename)
+                                new_e.submission_result = new_sr
+                                new_e.testcase = new_testcases[old_e.codename]
+
+                        new_dataset.sa_session.flush()
+                        old_task.active_dataset = new_dataset
                     task = old_task
                 else:
                     logger.critical("Task \"%s\" already exists in database.",
