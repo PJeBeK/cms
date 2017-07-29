@@ -32,7 +32,7 @@ from __future__ import unicode_literals
 
 import logging
 
-from tornado.web import MissingArgumentError
+import tornado.web
 
 from cms.db import Contest, Question, Participation
 from cmscommon.datetime import make_datetime
@@ -59,16 +59,16 @@ class QuestionsHandler(BaseHandler):
                     self.get_argument("show_ignored_questions_checkbox")
                 self.r_params["show_ignored_questions"] =\
                     show_ignored_questions
-            except MissingArgumentError:
+            except tornado.MissingArgumentError:
                 self.r_params["show_ignored_questions"] = 'off'
             try:
                 show_answered_questions = \
                     self.get_argument("show_answered_questions_checkbox")
                 self.r_params["show_answered_questions"] =\
                     show_answered_questions
-            except MissingArgumentError:
+            except tornado.MissingArgumentError:
                 self.r_params["show_answered_questions"] = 'off'
-        except MissingArgumentError:
+        except tornado.MissingArgumentError:
             self.r_params["show_ignored_questions"] = 'on'
             self.r_params["show_answered_questions"] = 'on'
 
